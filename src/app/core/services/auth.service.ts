@@ -39,6 +39,10 @@ export class AuthService {
     return localStorage.getItem(this.tokenStorageKey);
   }
 
+  isAuthenticated(): boolean {
+    return this.getToken() !== null;
+  }
+
   getCurrentUser(): CurrentUser | null {
     const storedUser = localStorage.getItem(this.userStorageKey);
 
@@ -57,5 +61,9 @@ export class AuthService {
   clearSession(): void {
     localStorage.removeItem(this.tokenStorageKey);
     localStorage.removeItem(this.userStorageKey);
+  }
+
+  logout(): void {
+    this.clearSession();
   }
 }

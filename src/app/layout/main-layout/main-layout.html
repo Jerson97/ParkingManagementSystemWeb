@@ -28,6 +28,19 @@
         <p class="eyebrow">Sistema de gestion</p>
         <h1>Panel administrativo</h1>
       </div>
+
+      <div class="session-actions">
+        @if (currentUser(); as user) {
+          <div class="current-user">
+            <span>{{ user.fullName }}</span>
+            <small>{{ user.role }}</small>
+          </div>
+        }
+
+        <button class="logout-button" type="button" (click)="logout()">
+          Cerrar sesion
+        </button>
+      </div>
     </header>
 
     <main class="content" id="main-content" tabindex="-1">
