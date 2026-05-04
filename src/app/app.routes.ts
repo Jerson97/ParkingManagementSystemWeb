@@ -4,7 +4,12 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'dashboard',
+    redirectTo: 'login',
+  },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./features/auth/login/login').then((m) => m.Login),
   },
   {
     path: 'dashboard',
