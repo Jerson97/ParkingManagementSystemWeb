@@ -1,0 +1,37 @@
+<div class="admin-shell">
+  <aside class="sidebar" aria-label="Navegacion principal">
+    <a class="brand" routerLink="/dashboard" aria-label="Ir al dashboard">
+      <span class="brand-mark" aria-hidden="true">P</span>
+      <span>
+        <strong>Cochera</strong>
+        <small>Administracion</small>
+      </span>
+    </a>
+
+    <nav class="sidebar-nav" aria-label="Secciones">
+      @for (item of navigationItems; track item.route) {
+        <a
+          class="nav-link"
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          ariaCurrentWhenActive="page"
+        >
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <div class="workspace">
+    <header class="topbar" role="banner">
+      <div>
+        <p class="eyebrow">Sistema de gestion</p>
+        <h1>Panel administrativo</h1>
+      </div>
+    </header>
+
+    <main class="content" id="main-content" tabindex="-1">
+      <router-outlet />
+    </main>
+  </div>
+</div>
