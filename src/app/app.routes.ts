@@ -14,15 +14,23 @@ export const routes: Routes = [
       import('./features/auth/login/login').then((m) => m.Login),
   },
   {
-    path: 'dashboard',
+    path: '',
     canActivate: [authGuard],
+    canActivateChild: [authGuard],
     loadComponent: () =>
       import('./layout/main-layout/main-layout').then((m) => m.MainLayout),
     children: [
       {
-        path: '',
+        path: 'dashboard',
         loadComponent: () =>
           import('./features/dashboard/dashboard').then((m) => m.Dashboard),
+      },
+      {
+        path: 'parking-entries/new',
+        loadComponent: () =>
+          import('./features/parking-entries/create-entry/create-entry').then(
+            (m) => m.CreateEntry,
+          ),
       },
     ],
   },

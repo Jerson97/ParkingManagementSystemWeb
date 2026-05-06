@@ -1,0 +1,87 @@
+<section class="create-entry" aria-labelledby="create-entry-title">
+  <div class="create-entry-header">
+    <div>
+      <p class="section-kicker">Operación</p>
+      <h2 id="create-entry-title">Registrar ingreso</h2>
+    </div>
+    <p class="create-entry-copy">
+      Registra el ingreso de un vehículo con una tarifa activa.
+    </p>
+  </div>
+
+  <form class="entry-form" [formGroup]="entryForm" (ngSubmit)="submit()" novalidate>
+    @if (isLoadingRateTypes()) {
+      <p class="form-status" role="status">Cargando tarifas...</p>
+    }
+
+    @if (successMessage()) {
+      <p class="form-success" role="status">{{ successMessage() }}</p>
+    }
+
+    @if (errorMessage()) {
+      <p class="form-error" role="alert">{{ errorMessage() }}</p>
+    }
+
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="licensePlate">Número de placa</label>
+        <input
+          id="licensePlate"
+          type="text"
+          formControlName="licensePlate"
+          autocomplete="off"
+          inputmode="text"
+          maxlength="7"
+          (input)="formatLicensePlateInput()"
+          [attr.aria-invalid]="
+            hasLicensePlateError('required') ||
+            hasLicensePlateError('maxlength') ||
+            hasLicensePlateError('pattern')
+          "
+          aria-describedby="licensePlate-error"
+        />
+        @if (hasLicensePlateError('required')) {
+          <p class="field-error" id="licensePlate-error">El número de placa es requerido.</p>
+        } @else if (hasLicensePlateError('maxlength')) {
+          <p class="field-error" id="licensePlate-error">El número de placa no puede exceder los 7 caracteres.</p>
+        } @else if (hasLicensePlateError('pattern')) {
+          <p class="field-error" id="licensePlate-error">
+            El número de placa debe tener un formato válido. Ejemplo: A1S-959 o ABC-123.
+          </p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="rateTypeId">Tarifa</label>
+        <select
+          id="rateTypeId"
+          formControlName="rateTypeId"
+          [attr.aria-invalid]="hasRateTypeError()"
+          aria-describedby="rateTypeId-error"
+        >
+          <option [ngValue]="0">Selecciona una tarifa</option>
+          @for (rateType of activeRateTypes(); track rateType.id) {
+            <option [ngValue]="rateType.id">{{ formatRateType(rateType) }}</option>
+          }
+        </select>
+        @if (hasRateTypeError()) {
+          <p class="field-error" id="rateTypeId-error">La tarifa debe ser mayor a 0.</p>
+        }
+      </div>
+    </div>
+
+    @if (!isLoadingRateTypes() && activeRateTypes().length === 0) {
+      <p class="form-status" role="status">No hay tarifas activas disponibles.</p>
+    }
+
+    <div class="form-actions">
+      <button class="submit-button" type="submit" [disabled]="isLoadingRateTypes() || isSubmitting()">
+        @if (isSubmitting()) {
+          Registrando...
+        } @else {
+          Registrar ingreso
+        }
+      </button>
+    </div>
+  </form>
+</section>

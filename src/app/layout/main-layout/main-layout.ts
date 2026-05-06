@@ -20,6 +20,10 @@ export class MainLayout {
       label: 'Dashboard',
       route: '/dashboard',
     },
+    {
+      label: 'Registrar ingreso',
+      route: '/parking-entries/new',
+    },
   ] as const;
 
   protected logout(): void {
