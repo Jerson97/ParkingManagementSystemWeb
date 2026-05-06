@@ -4,7 +4,11 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { MessageResult } from '../../../core/models/message-result';
-import { CreateParkingEntryRequest } from '../models/parking-entry.models';
+import {
+  CreateParkingEntryRequest,
+  GetParkingFeeRequest,
+  GetParkingFeeResponse,
+} from '../models/parking-entry.models';
 
 @Injectable({
   providedIn: 'root',
@@ -15,5 +19,12 @@ export class ParkingEntriesService {
 
   createEntry(request: CreateParkingEntryRequest): Observable<MessageResult<number>> {
     return this.http.post<MessageResult<number>>(this.parkingEntriesUrl, request);
+  }
+
+  calculateFee(request: GetParkingFeeRequest): Observable<MessageResult<GetParkingFeeResponse>> {
+    return this.http.post<MessageResult<GetParkingFeeResponse>>(
+      `${this.parkingEntriesUrl}/calculate`,
+      request,
+    );
   }
 }

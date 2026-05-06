@@ -24,6 +24,10 @@ export class MainLayout {
       label: 'Registrar ingreso',
       route: '/parking-entries/new',
     },
+    {
+      label: 'Consultar monto',
+      route: '/parking-entries/calculate',
+    },
   ] as const;
 
   protected logout(): void {
