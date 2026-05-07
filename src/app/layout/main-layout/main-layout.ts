@@ -36,6 +36,10 @@ export class MainLayout {
       label: 'Buscar ticket',
       route: '/parking-entries/search',
     },
+    {
+      label: 'Historial',
+      route: '/parking-entries/history',
+    },
   ] as const;
 
   protected logout(): void {

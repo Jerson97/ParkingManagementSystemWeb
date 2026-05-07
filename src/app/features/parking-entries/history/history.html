@@ -1,0 +1,135 @@
+<section class="history" aria-labelledby="history-title">
+  <div class="history-header">
+    <div>
+      <p class="section-kicker">Consulta</p>
+      <h2 id="history-title">Historial</h2>
+    </div>
+    <p class="history-copy">
+      Consulta tickets cerrados por placa o fecha de salida.
+    </p>
+  </div>
+
+  <form class="history-form" [formGroup]="filtersForm" (ngSubmit)="submit()" novalidate>
+    @if (errorMessage()) {
+      <p class="form-error" role="alert">{{ errorMessage() }}</p>
+    }
+
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="licensePlate">Placa</label>
+        <input
+          id="licensePlate"
+          type="text"
+          formControlName="licensePlate"
+          autocomplete="off"
+          inputmode="text"
+          maxlength="7"
+          (input)="formatLicensePlateInput()"
+          [attr.aria-invalid]="hasLicensePlateError('maxlength') || hasLicensePlateError('pattern')"
+          aria-describedby="licensePlate-error"
+        />
+        @if (hasLicensePlateError('maxlength')) {
+          <p class="field-error" id="licensePlate-error">El número de placa no puede exceder los 7 caracteres.</p>
+        } @else if (hasLicensePlateError('pattern')) {
+          <p class="field-error" id="licensePlate-error">
+            El número de placa debe tener un formato válido. Ejemplo: A1S-959 o ABC-123.
+          </p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="from">Fecha de salida desde</label>
+        <input
+          id="from"
+          type="date"
+          formControlName="from"
+          [max]="today"
+          [attr.aria-invalid]="hasDateError('fromInFuture') || hasDateError('fromAfterTo')"
+          aria-describedby="from-error"
+        />
+        @if (hasDateError('fromInFuture')) {
+          <p class="field-error" id="from-error">La fecha de inicio no puede ser mayor a la fecha actual.</p>
+        } @else if (hasDateError('fromAfterTo')) {
+          <p class="field-error" id="from-error">La fecha de inicio no puede ser mayor que la fecha final.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="to">Fecha de salida hasta</label>
+        <input
+          id="to"
+          type="date"
+          formControlName="to"
+          [max]="today"
+          [attr.aria-invalid]="hasDateError('toInFuture') || hasDateError('fromAfterTo')"
+          aria-describedby="to-error"
+        />
+        @if (hasDateError('toInFuture')) {
+          <p class="field-error" id="to-error">La fecha final no puede ser mayor a la fecha actual.</p>
+        }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="secondary-button" type="button" [disabled]="isLoading()" (click)="clearFilters()">
+        Limpiar filtros
+      </button>
+      <button class="submit-button" type="submit" [disabled]="isLoading()">
+        @if (isLoading()) {
+          Consultando...
+        } @else {
+          Buscar
+        }
+      </button>
+    </div>
+  </form>
+
+  <section class="history-result" aria-labelledby="history-result-title">
+    <div class="result-heading">
+      <div>
+        <p class="section-kicker">Resultado</p>
+        <h3 id="history-result-title">Registros</h3>
+      </div>
+      <p class="result-count">{{ historyEntries().length }} registros</p>
+    </div>
+
+    @if (isLoading()) {
+      <p class="empty-state" role="status">Consultando historial...</p>
+    } @else if (hasSearched() && historyEntries().length === 0 && !errorMessage()) {
+      <p class="empty-state">No se encontraron registros para los filtros seleccionados.</p>
+    } @else {
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Ticket</th>
+              <th scope="col">Placa</th>
+              <th scope="col">Espacio</th>
+              <th scope="col">Tarifa</th>
+              <th scope="col">Hora de ingreso</th>
+              <th scope="col">Hora de salida</th>
+              <th scope="col">Monto total</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Pago</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of historyEntries(); track entry.id) {
+              <tr>
+                <td>{{ entry.ticketNumber }}</td>
+                <td>{{ entry.licensePlate }}</td>
+                <td>{{ entry.spaceNumber }}</td>
+                <td>{{ entry.rateTypeName }}</td>
+                <td>{{ formatDate(entry.entryTime) }}</td>
+                <td>{{ formatExitTime(entry.exitTime) }}</td>
+                <td>{{ formatAmount(entry.totalAmount) }}</td>
+                <td>{{ formatTicketStatus(entry.status) }}</td>
+                <td>{{ formatPaymentStatus(entry.paymentStatus) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</section>

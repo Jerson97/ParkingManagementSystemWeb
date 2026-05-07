@@ -53,6 +53,11 @@ export const routes: Routes = [
             (m) => m.SearchTicket,
           ),
       },
+      {
+        path: 'parking-entries/history',
+        loadComponent: () =>
+          import('./features/parking-entries/history/history').then((m) => m.History),
+      },
     ],
   },
   {
