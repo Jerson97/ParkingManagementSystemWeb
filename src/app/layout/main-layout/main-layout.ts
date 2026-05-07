@@ -32,6 +32,10 @@ export class MainLayout {
       label: 'Registrar salida',
       route: '/parking-entries/exit',
     },
+    {
+      label: 'Buscar ticket',
+      route: '/parking-entries/search',
+    },
   ] as const;
 
   protected logout(): void {

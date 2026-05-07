@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { MessageResult } from '../../../core/models/message-result';
 import {
   CreateParkingEntryRequest,
+  GetParkingEntryByTicketResponse,
   GetParkingFeeRequest,
   GetParkingFeeResponse,
   RegisterVehicleExitRequest,
@@ -36,6 +37,12 @@ export class ParkingEntriesService {
     return this.http.post<MessageResult<RegisterVehicleExitResponse>>(
       `${this.parkingEntriesUrl}/exit`,
       request,
+    );
+  }
+
+  getByTicket(ticketNumber: string): Observable<MessageResult<GetParkingEntryByTicketResponse>> {
+    return this.http.get<MessageResult<GetParkingEntryByTicketResponse>>(
+      `${this.parkingEntriesUrl}/${encodeURIComponent(ticketNumber)}`,
     );
   }
 }

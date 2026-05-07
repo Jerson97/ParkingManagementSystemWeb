@@ -33,3 +33,16 @@ export interface RegisterVehicleExitResponse {
   readonly status: string;
   readonly spaceNumber: string;
 }
+
+export interface GetParkingEntryByTicketResponse {
+  readonly id: number;
+  readonly ticketNumber: string;
+  readonly licensePlate: string;
+  readonly spaceNumber: string;
+  readonly rateTypeName: string;
+  readonly entryTime: string;
+  readonly exitTime: string | null;
+  readonly totalAmount: number | null;
+  readonly status: string;
+  readonly paymentStatus: string;
+}

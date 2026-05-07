@@ -46,6 +46,13 @@ export const routes: Routes = [
             (m) => m.RegisterExit,
           ),
       },
+      {
+        path: 'parking-entries/search',
+        loadComponent: () =>
+          import('./features/parking-entries/search-ticket/search-ticket').then(
+            (m) => m.SearchTicket,
+          ),
+      },
     ],
   },
   {

@@ -1,0 +1,95 @@
+<section class="search-ticket" aria-labelledby="search-ticket-title">
+  <div class="search-ticket-header">
+    <div>
+      <p class="section-kicker">Consulta</p>
+      <h2 id="search-ticket-title">Buscar ticket</h2>
+    </div>
+    <p class="search-ticket-copy">
+      Busca el detalle de un ticket por su número.
+    </p>
+  </div>
+
+  <form class="search-form" [formGroup]="searchForm" (ngSubmit)="submit()" novalidate>
+    @if (errorMessage()) {
+      <p class="form-error" role="alert">{{ errorMessage() }}</p>
+    }
+
+    <div class="form-field">
+      <label for="ticketNumber">Número de ticket</label>
+      <input
+        id="ticketNumber"
+        type="text"
+        formControlName="ticketNumber"
+        autocomplete="off"
+        maxlength="30"
+        [attr.aria-invalid]="hasTicketNumberError('required') || hasTicketNumberError('maxlength')"
+        aria-describedby="ticketNumber-error"
+      />
+      @if (hasTicketNumberError('required')) {
+        <p class="field-error" id="ticketNumber-error">El número de ticket es requerido.</p>
+      } @else if (hasTicketNumberError('maxlength')) {
+        <p class="field-error" id="ticketNumber-error">
+          El número de ticket no puede exceder los 30 caracteres.
+        </p>
+      }
+    </div>
+
+    <div class="form-actions">
+      <button class="submit-button" type="submit" [disabled]="isLoading()">
+        @if (isLoading()) {
+          Buscando...
+        } @else {
+          Buscar ticket
+        }
+      </button>
+    </div>
+  </form>
+
+  @if (ticketResult(); as result) {
+    <section class="ticket-result" aria-labelledby="ticket-result-title">
+      <div>
+        <p class="section-kicker">Resultado</p>
+        <h3 id="ticket-result-title">Detalle del ticket</h3>
+      </div>
+
+      <dl class="result-grid">
+        <div class="result-item">
+          <dt>Ticket</dt>
+          <dd>{{ result.ticketNumber }}</dd>
+        </div>
+        <div class="result-item">
+          <dt>Placa</dt>
+          <dd>{{ result.licensePlate }}</dd>
+        </div>
+        <div class="result-item">
+          <dt>Espacio</dt>
+          <dd>{{ result.spaceNumber }}</dd>
+        </div>
+        <div class="result-item">
+          <dt>Tarifa</dt>
+          <dd>{{ result.rateTypeName }}</dd>
+        </div>
+        <div class="result-item">
+          <dt>Hora de ingreso</dt>
+          <dd>{{ formatDate(result.entryTime) }}</dd>
+        </div>
+        <div class="result-item">
+          <dt>Hora de salida</dt>
+          <dd>{{ formatExitTime(result.exitTime) }}</dd>
+        </div>
+        <div class="result-item result-total">
+          <dt>Monto total</dt>
+          <dd>{{ formatAmount(result.totalAmount) }}</dd>
+        </div>
+        <div class="result-item">
+          <dt>Estado del ticket</dt>
+          <dd>{{ formatTicketStatus(result.status) }}</dd>
+        </div>
+        <div class="result-item">
+          <dt>Estado de pago</dt>
+          <dd>{{ formatPaymentStatus(result.paymentStatus) }}</dd>
+        </div>
+      </dl>
+    </section>
+  }
+</section>
