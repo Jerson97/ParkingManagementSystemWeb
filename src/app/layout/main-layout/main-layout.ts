@@ -40,6 +40,10 @@ export class MainLayout {
       label: 'Historial',
       route: '/parking-entries/history',
     },
+    {
+      label: 'Espacios',
+      route: '/parking-spaces',
+    },
   ] as const;
 
   protected logout(): void {

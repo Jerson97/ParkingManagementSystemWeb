@@ -1,0 +1,62 @@
+<section class="parking-spaces" aria-labelledby="parking-spaces-title">
+  <div class="parking-spaces-header">
+    <div>
+      <p class="section-kicker">Operación</p>
+      <h2 id="parking-spaces-title">Espacios</h2>
+    </div>
+    <p class="parking-spaces-copy">
+      Visualiza el estado actual de los espacios de cochera.
+    </p>
+  </div>
+
+  @if (isLoading()) {
+    <p class="parking-spaces-status" role="status">Cargando espacios...</p>
+  } @else if (errorMessage()) {
+    <p class="parking-spaces-error" role="alert">{{ errorMessage() }}</p>
+  } @else {
+    <div class="summary-grid" aria-label="Resumen de espacios">
+      @for (card of summaryCards(); track card.id) {
+        <article class="summary-card">
+          <p class="summary-label">{{ card.label }}</p>
+          <strong class="summary-value">{{ card.value }}</strong>
+        </article>
+      }
+    </div>
+
+    <section class="spaces-table-panel" aria-labelledby="spaces-table-title">
+      <div class="table-heading">
+        <div>
+          <p class="section-kicker">Detalle</p>
+          <h3 id="spaces-table-title">Estado de espacios</h3>
+        </div>
+      </div>
+
+      @if (spaces().length === 0) {
+        <p class="empty-state">No hay espacios registrados.</p>
+      } @else {
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Número de espacio</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Placa</th>
+                <th scope="col">Cliente</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (space of spaces(); track space.id) {
+                <tr>
+                  <td>{{ space.spaceNumber }}</td>
+                  <td>{{ formatStatus(space.status) }}</td>
+                  <td>{{ formatOptionalValue(space.licensePlate) }}</td>
+                  <td>{{ formatOptionalValue(space.customerName) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  }
+</section>

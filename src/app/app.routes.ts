@@ -58,6 +58,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/parking-entries/history/history').then((m) => m.History),
       },
+      {
+        path: 'parking-spaces',
+        loadComponent: () =>
+          import(
+            './features/parking-spaces/pages/parking-spaces-list/parking-spaces-list'
+          ).then((m) => m.ParkingSpacesList),
+      },
     ],
   },
   {
