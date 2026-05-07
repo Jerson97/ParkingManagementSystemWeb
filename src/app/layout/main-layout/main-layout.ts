@@ -28,6 +28,10 @@ export class MainLayout {
       label: 'Consultar monto',
       route: '/parking-entries/calculate',
     },
+    {
+      label: 'Registrar salida',
+      route: '/parking-entries/exit',
+    },
   ] as const;
 
   protected logout(): void {

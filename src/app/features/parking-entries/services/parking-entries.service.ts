@@ -8,6 +8,8 @@ import {
   CreateParkingEntryRequest,
   GetParkingFeeRequest,
   GetParkingFeeResponse,
+  RegisterVehicleExitRequest,
+  RegisterVehicleExitResponse,
 } from '../models/parking-entry.models';
 
 @Injectable({
@@ -24,6 +26,15 @@ export class ParkingEntriesService {
   calculateFee(request: GetParkingFeeRequest): Observable<MessageResult<GetParkingFeeResponse>> {
     return this.http.post<MessageResult<GetParkingFeeResponse>>(
       `${this.parkingEntriesUrl}/calculate`,
+      request,
+    );
+  }
+
+  registerExit(
+    request: RegisterVehicleExitRequest,
+  ): Observable<MessageResult<RegisterVehicleExitResponse>> {
+    return this.http.post<MessageResult<RegisterVehicleExitResponse>>(
+      `${this.parkingEntriesUrl}/exit`,
       request,
     );
   }

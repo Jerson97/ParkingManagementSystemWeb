@@ -39,6 +39,13 @@ export const routes: Routes = [
             (m) => m.CalculateFee,
           ),
       },
+      {
+        path: 'parking-entries/exit',
+        loadComponent: () =>
+          import('./features/parking-entries/register-exit/register-exit').then(
+            (m) => m.RegisterExit,
+          ),
+      },
     ],
   },
   {
