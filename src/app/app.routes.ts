@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -64,6 +65,17 @@ export const routes: Routes = [
           import(
             './features/parking-spaces/pages/parking-spaces-list/parking-spaces-list'
           ).then((m) => m.ParkingSpacesList),
+      },
+      {
+        path: 'rate-types',
+        canActivate: [roleGuard],
+        data: {
+          roles: ['Admin'],
+        },
+        loadComponent: () =>
+          import('./features/rate-types/pages/rate-types-list/rate-types-list').then(
+            (m) => m.RateTypesList,
+          ),
       },
     ],
   },

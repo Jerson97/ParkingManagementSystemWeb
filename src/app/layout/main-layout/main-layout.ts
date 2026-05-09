@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
@@ -15,7 +15,7 @@ export class MainLayout {
   private readonly router = inject(Router);
 
   protected readonly currentUser = signal(this.authService.getCurrentUser());
-  protected readonly navigationItems = [
+  private readonly baseNavigationItems = [
     {
       label: 'Dashboard',
       route: '/dashboard',
@@ -45,6 +45,21 @@ export class MainLayout {
       route: '/parking-spaces',
     },
   ] as const;
+  protected readonly navigationItems = computed(() => {
+    const currentUser = this.currentUser();
+
+    if (currentUser?.role !== 'Admin') {
+      return this.baseNavigationItems;
+    }
+
+    return [
+      ...this.baseNavigationItems,
+      {
+        label: 'Tarifas',
+        route: '/rate-types',
+      },
+    ] as const;
+  });
 
   protected logout(): void {
     this.authService.logout();

@@ -1,0 +1,256 @@
+.rate-types {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.rate-types-header,
+.table-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.section-kicker {
+  margin: 0 0 var(--space-1);
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+h2,
+h3 {
+  margin: 0;
+  color: var(--color-text);
+  line-height: 1.15;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 2vw, 2rem);
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+.rate-types-copy {
+  max-width: 30rem;
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.rate-type-form,
+.rate-types-table-panel {
+  display: grid;
+  gap: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto;
+  gap: var(--space-4);
+}
+
+.form-field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+label {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+input[type='text'],
+input[type='number'] {
+  width: 100%;
+  min-height: 2.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-3);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+input[aria-invalid='true'] {
+  border-color: #b91c1c;
+}
+
+.checkbox-field {
+  align-content: center;
+}
+
+.checkbox-field label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+}
+
+.field-error,
+.form-success,
+.form-error,
+.empty-state {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.field-error {
+  color: #991b1b;
+  font-size: 0.875rem;
+}
+
+.form-success,
+.form-error,
+.empty-state {
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+}
+
+.form-success {
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.form-error {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.empty-state {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+
+.form-actions,
+.row-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.form-actions {
+  justify-content: flex-end;
+}
+
+.submit-button,
+.secondary-button,
+.row-button {
+  min-height: 2.5rem;
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-3);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.submit-button {
+  min-height: 2.875rem;
+  border: 0;
+  padding-inline: var(--space-4);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.submit-button:hover {
+  background: var(--color-accent-strong);
+}
+
+.secondary-button,
+.row-button {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.secondary-button:hover,
+.row-button:hover {
+  background: var(--color-surface-muted);
+}
+
+.danger-button {
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.submit-button:disabled,
+.secondary-button:disabled,
+.row-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 42rem;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+}
+
+td {
+  color: var(--color-text);
+  font-weight: 650;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .checkbox-field {
+    align-content: start;
+  }
+}
+
+@media (max-width: 760px) {
+  .rate-types-header,
+  .table-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .rate-type-form,
+  .rate-types-table-panel {
+    padding: var(--space-4);
+  }
+
+  .form-actions,
+  .row-actions {
+    flex-direction: column;
+  }
+
+  .submit-button,
+  .secondary-button,
+  .row-button {
+    width: 100%;
+  }
+}

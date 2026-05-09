@@ -1,0 +1,147 @@
+<section class="rate-types" aria-labelledby="rate-types-title">
+  <div class="rate-types-header">
+    <div>
+      <p class="section-kicker">Administración</p>
+      <h2 id="rate-types-title">Tarifas</h2>
+    </div>
+    <p class="rate-types-copy">
+      Administra las tarifas disponibles para los ingresos de cochera.
+    </p>
+  </div>
+
+  <form class="rate-type-form" [formGroup]="rateTypeForm" (ngSubmit)="submit()" novalidate>
+    <div>
+      <p class="section-kicker">{{ isEditing() ? 'Edición' : 'Registro' }}</p>
+      <h3>{{ isEditing() ? 'Editar tarifa' : 'Nueva tarifa' }}</h3>
+    </div>
+
+    @if (successMessage()) {
+      <p class="form-success" role="status">{{ successMessage() }}</p>
+    }
+
+    @if (errorMessage()) {
+      <p class="form-error" role="alert">{{ errorMessage() }}</p>
+    }
+
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="name">Nombre</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          autocomplete="off"
+          maxlength="50"
+          [attr.aria-invalid]="hasNameError('required') || hasNameError('maxlength')"
+          aria-describedby="name-error"
+        />
+        @if (hasNameError('required')) {
+          <p class="field-error" id="name-error">El nombre de la tarifa es requerido.</p>
+        } @else if (hasNameError('maxlength')) {
+          <p class="field-error" id="name-error">El nombre no puede exceder los 50 caracteres.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="price">Precio</label>
+        <input
+          id="price"
+          type="number"
+          formControlName="price"
+          min="0.01"
+          step="0.01"
+          [attr.aria-invalid]="hasPriceError()"
+          aria-describedby="price-error"
+        />
+        @if (hasPriceError()) {
+          <p class="field-error" id="price-error">El precio debe ser mayor a 0.</p>
+        }
+      </div>
+
+      <div class="form-field checkbox-field">
+        <label>
+          <input type="checkbox" formControlName="isHourly" />
+          Por hora
+        </label>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      @if (isEditing()) {
+        <button class="secondary-button" type="button" [disabled]="isSaving()" (click)="cancelEdit()">
+          Cancelar edición
+        </button>
+      }
+
+      <button class="submit-button" type="submit" [disabled]="isSaving()">
+        @if (isSaving()) {
+          Guardando...
+        } @else if (isEditing()) {
+          Actualizar tarifa
+        } @else {
+          Registrar tarifa
+        }
+      </button>
+    </div>
+  </form>
+
+  <section class="rate-types-table-panel" aria-labelledby="rate-types-table-title">
+    <div class="table-heading">
+      <div>
+        <p class="section-kicker">Listado</p>
+        <h3 id="rate-types-table-title">Tarifas registradas</h3>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <p class="empty-state" role="status">Cargando tarifas...</p>
+    } @else if (rateTypes().length === 0) {
+      <p class="empty-state">No hay tarifas registradas.</p>
+    } @else {
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Precio</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (rateType of rateTypes(); track rateType.id) {
+              <tr>
+                <td>{{ rateType.name }}</td>
+                <td>{{ formatPrice(rateType.price) }}</td>
+                <td>{{ formatType(rateType.isHourly) }}</td>
+                <td>{{ formatStatus(rateType.isActive) }}</td>
+                <td>
+                  <div class="row-actions">
+                    <button class="row-button" type="button" (click)="edit(rateType)">
+                      Editar
+                    </button>
+                    @if (rateType.isActive) {
+                      <button
+                        class="row-button danger-button"
+                        type="button"
+                        [disabled]="deactivatingId() === rateType.id"
+                        (click)="deactivate(rateType)"
+                      >
+                        @if (deactivatingId() === rateType.id) {
+                          Desactivando...
+                        } @else {
+                          Desactivar
+                        }
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</section>
