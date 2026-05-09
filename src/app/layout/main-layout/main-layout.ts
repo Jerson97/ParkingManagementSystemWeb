@@ -44,6 +44,10 @@ export class MainLayout {
       label: 'Espacios',
       route: '/parking-spaces',
     },
+    {
+      label: 'Abonados',
+      route: '/subscriptions',
+    },
   ] as const;
   protected readonly navigationItems = computed(() => {
     const currentUser = this.currentUser();

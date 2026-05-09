@@ -1,0 +1,74 @@
+<section class="subscriptions" aria-labelledby="subscriptions-title">
+  <div class="subscriptions-header">
+    <div>
+      <p class="section-kicker">Operación</p>
+      <h2 id="subscriptions-title">Abonados</h2>
+    </div>
+    <p class="subscriptions-copy">
+      Visualiza las suscripciones activas y vencidas registradas en la cochera.
+    </p>
+  </div>
+
+  @if (isLoading()) {
+    <p class="subscriptions-status" role="status">Cargando abonados...</p>
+  } @else if (errorMessage()) {
+    <p class="subscriptions-error" role="alert">{{ errorMessage() }}</p>
+  } @else {
+    <div class="summary-grid" aria-label="Resumen de abonados">
+      @for (card of summaryCards(); track card.id) {
+        <article class="summary-card">
+          <p class="summary-label">{{ card.label }}</p>
+          <strong class="summary-value">{{ card.value }}</strong>
+        </article>
+      }
+    </div>
+
+    <section class="subscriptions-table-panel" aria-labelledby="subscriptions-table-title">
+      <div class="table-heading">
+        <div>
+          <p class="section-kicker">Detalle</p>
+          <h3 id="subscriptions-table-title">Listado de abonados</h3>
+        </div>
+      </div>
+
+      @if (subscriptions().length === 0) {
+        <p class="empty-state">No hay abonados registrados.</p>
+      } @else {
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Cliente</th>
+                <th scope="col">Teléfono</th>
+                <th scope="col">Placa</th>
+                <th scope="col">Tarifa</th>
+                <th scope="col">Espacio</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Fecha inicio</th>
+                <th scope="col">Fecha fin</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (subscription of subscriptions(); track subscription.id) {
+                <tr>
+                  <td>{{ subscription.customerName }}</td>
+                  <td>{{ subscription.phoneNumber }}</td>
+                  <td>{{ subscription.licensePlate }}</td>
+                  <td>{{ subscription.rateTypeName }}</td>
+                  <td>{{ subscription.spaceNumber }}</td>
+                  <td>
+                    <span [class]="getStatusClass(subscription.status)">
+                      {{ formatStatus(subscription.status) }}
+                    </span>
+                  </td>
+                  <td>{{ formatDate(subscription.startDate) }}</td>
+                  <td>{{ formatDate(subscription.endDate) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  }
+</section>

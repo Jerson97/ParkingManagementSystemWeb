@@ -67,6 +67,17 @@ export const routes: Routes = [
           ).then((m) => m.ParkingSpacesList),
       },
       {
+        path: 'subscriptions',
+        canActivate: [roleGuard],
+        data: {
+          roles: ['Admin', 'Attendant'],
+        },
+        loadComponent: () =>
+          import(
+            './features/subscriptions/pages/subscriptions-list/subscriptions-list'
+          ).then((m) => m.SubscriptionsList),
+      },
+      {
         path: 'rate-types',
         canActivate: [roleGuard],
         data: {
