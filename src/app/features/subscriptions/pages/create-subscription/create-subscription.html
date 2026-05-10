@@ -1,0 +1,183 @@
+<section class="create-subscription" aria-labelledby="create-subscription-title">
+  <div class="create-subscription-header">
+    <div>
+      <p class="section-kicker">Abonados</p>
+      <h2 id="create-subscription-title">Crear abonado</h2>
+    </div>
+    <p class="create-subscription-copy">
+      Registra una suscripción asignando una tarifa activa y un espacio disponible.
+    </p>
+  </div>
+
+  <form class="subscription-form" [formGroup]="subscriptionForm" (ngSubmit)="submit()" novalidate>
+    @if (isLoadingCatalogs()) {
+      <p class="form-status" role="status">Cargando catálogos...</p>
+    }
+
+    @if (successMessage()) {
+      <p class="form-success" role="status">{{ successMessage() }}</p>
+    }
+
+    @if (errorMessage()) {
+      <p class="form-error" role="alert">{{ errorMessage() }}</p>
+    }
+
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="customerName">Nombre del abonado</label>
+        <input
+          id="customerName"
+          type="text"
+          formControlName="customerName"
+          autocomplete="name"
+          maxlength="150"
+          [attr.aria-invalid]="
+            hasCustomerNameError('required') || hasCustomerNameError('maxlength')
+          "
+          aria-describedby="customerName-error"
+        />
+        @if (hasCustomerNameError('required')) {
+          <p class="field-error" id="customerName-error">El nombre del abonado es requerido.</p>
+        } @else if (hasCustomerNameError('maxlength')) {
+          <p class="field-error" id="customerName-error">El nombre no puede exceder los 150 caracteres.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="phoneNumber">Número de teléfono</label>
+        <input
+          id="phoneNumber"
+          type="tel"
+          formControlName="phoneNumber"
+          autocomplete="tel"
+          maxlength="20"
+          [attr.aria-invalid]="
+            hasPhoneNumberError('required') || hasPhoneNumberError('maxlength')
+          "
+          aria-describedby="phoneNumber-error"
+        />
+        @if (hasPhoneNumberError('required')) {
+          <p class="field-error" id="phoneNumber-error">El número de teléfono es requerido.</p>
+        } @else if (hasPhoneNumberError('maxlength')) {
+          <p class="field-error" id="phoneNumber-error">El número de teléfono no puede exceder los 20 caracteres.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="licensePlate">Número de placa</label>
+        <input
+          id="licensePlate"
+          type="text"
+          formControlName="licensePlate"
+          autocomplete="off"
+          inputmode="text"
+          maxlength="7"
+          (input)="formatLicensePlateInput()"
+          [attr.aria-invalid]="
+            hasLicensePlateError('required') ||
+            hasLicensePlateError('maxlength') ||
+            hasLicensePlateError('pattern')
+          "
+          aria-describedby="licensePlate-error"
+        />
+        @if (hasLicensePlateError('required')) {
+          <p class="field-error" id="licensePlate-error">El número de placa es requerido.</p>
+        } @else if (hasLicensePlateError('maxlength')) {
+          <p class="field-error" id="licensePlate-error">El número de placa no puede exceder los 7 caracteres.</p>
+        } @else if (hasLicensePlateError('pattern')) {
+          <p class="field-error" id="licensePlate-error">
+            El número de placa debe tener un formato válido. Ejemplo: A1S-959 o ABC-123.
+          </p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="rateTypeId">Tarifa</label>
+        <select
+          id="rateTypeId"
+          formControlName="rateTypeId"
+          [attr.aria-invalid]="hasRateTypeError()"
+          aria-describedby="rateTypeId-error"
+        >
+          <option [ngValue]="0">Selecciona una tarifa</option>
+          @for (rateType of activeRateTypes(); track rateType.id) {
+            <option [ngValue]="rateType.id">{{ formatRateType(rateType) }}</option>
+          }
+        </select>
+        @if (hasRateTypeError()) {
+          <p class="field-error" id="rateTypeId-error">La tarifa debe ser mayor a 0.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="parkingSpaceId">Espacio</label>
+        <select
+          id="parkingSpaceId"
+          formControlName="parkingSpaceId"
+          [attr.aria-invalid]="hasParkingSpaceError()"
+          aria-describedby="parkingSpaceId-error"
+        >
+          <option [ngValue]="0">Selecciona un espacio</option>
+          @for (space of availableParkingSpaces(); track space.id) {
+            <option [ngValue]="space.id">{{ space.spaceNumber }}</option>
+          }
+        </select>
+        @if (hasParkingSpaceError()) {
+          <p class="field-error" id="parkingSpaceId-error">El espacio debe ser mayor a 0.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="startDate">Fecha de inicio</label>
+        <input
+          id="startDate"
+          type="date"
+          formControlName="startDate"
+          [attr.aria-invalid]="hasStartDateError()"
+          aria-describedby="startDate-error"
+        />
+        @if (hasStartDateError()) {
+          <p class="field-error" id="startDate-error">La fecha de inicio es requerida.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="endDate">Fecha de fin</label>
+        <input
+          id="endDate"
+          type="date"
+          formControlName="endDate"
+          [attr.aria-invalid]="hasEndDateError() || hasDateRangeError()"
+          aria-describedby="endDate-error"
+        />
+        @if (hasEndDateError()) {
+          <p class="field-error" id="endDate-error">La fecha de fin es requerida.</p>
+        } @else if (hasDateRangeError()) {
+          <p class="field-error" id="endDate-error">La fecha de fin debe ser mayor a la fecha de inicio.</p>
+        }
+      </div>
+    </div>
+
+    @if (!isLoadingCatalogs() && activeRateTypes().length === 0) {
+      <p class="form-status" role="status">No hay tarifas activas disponibles.</p>
+    }
+
+    @if (!isLoadingCatalogs() && availableParkingSpaces().length === 0) {
+      <p class="form-status" role="status">No hay espacios disponibles.</p>
+    }
+
+    <div class="form-actions">
+      <button
+        class="submit-button"
+        type="submit"
+        [disabled]="isLoadingCatalogs() || isSubmitting()"
+      >
+        @if (isSubmitting()) {
+          Registrando...
+        } @else {
+          Crear abonado
+        }
+      </button>
+    </div>
+  </form>
+</section>

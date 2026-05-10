@@ -9,3 +9,13 @@ export type SubscriptionResponse = {
   readonly startDate: string;
   readonly endDate: string;
 };
+
+export type CreateSubscriptionRequest = {
+  readonly customerName: string;
+  readonly phoneNumber: string;
+  readonly licensePlate: string;
+  readonly rateTypeId: number;
+  readonly parkingSpaceId: number;
+  readonly startDate: string;
+  readonly endDate: string;
+};

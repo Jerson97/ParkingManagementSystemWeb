@@ -48,6 +48,10 @@ export class MainLayout {
       label: 'Abonados',
       route: '/subscriptions',
     },
+    {
+      label: 'Crear abonado',
+      route: '/subscriptions/new',
+    },
   ] as const;
   protected readonly navigationItems = computed(() => {
     const currentUser = this.currentUser();

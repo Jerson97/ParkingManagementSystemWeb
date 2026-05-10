@@ -4,7 +4,10 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { MessageResult } from '../../../core/models/message-result';
-import { SubscriptionResponse } from '../models/subscription.models';
+import {
+  CreateSubscriptionRequest,
+  SubscriptionResponse,
+} from '../models/subscription.models';
 
 @Injectable({
   providedIn: 'root',
@@ -15,5 +18,9 @@ export class SubscriptionsService {
 
   getAll(): Observable<MessageResult<readonly SubscriptionResponse[]>> {
     return this.http.get<MessageResult<readonly SubscriptionResponse[]>>(this.subscriptionsUrl);
+  }
+
+  create(request: CreateSubscriptionRequest): Observable<MessageResult<number>> {
+    return this.http.post<MessageResult<number>>(this.subscriptionsUrl, request);
   }
 }
