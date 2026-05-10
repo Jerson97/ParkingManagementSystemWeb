@@ -27,6 +27,8 @@ export class SubscriptionsList implements OnInit {
 
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal('');
+  protected readonly successMessage = signal('');
+  protected readonly renewingSubscriptionId = signal<number | null>(null);
   protected readonly subscriptions = signal<readonly SubscriptionResponse[]>([]);
   protected readonly summaryCards = computed<readonly SummaryCard[]>(() => {
     const subscriptions = this.subscriptions();
@@ -92,9 +94,43 @@ export class SubscriptionsList implements OnInit {
     return this.dateFormatter.format(date);
   }
 
-  private loadSubscriptions(): void {
-    this.isLoading.set(true);
+  protected renew(subscriptionId: number): void {
+    const confirmed = window.confirm('¿Seguro que deseas renovar esta suscripción?');
+
+    if (!confirmed) {
+      return;
+    }
+
     this.errorMessage.set('');
+    this.successMessage.set('');
+    this.renewingSubscriptionId.set(subscriptionId);
+
+    this.subscriptionsService
+      .renew({ subscriptionId })
+      .pipe(finalize(() => this.renewingSubscriptionId.set(null)))
+      .subscribe({
+        next: (result) => {
+          if (result.code === 1 && result.data !== null) {
+            this.successMessage.set(result.message || 'Suscripción renovada correctamente.');
+            this.loadSubscriptions({ clearMessages: false });
+            return;
+          }
+
+          this.errorMessage.set(result.message || 'No se pudo renovar la suscripción.');
+        },
+        error: (error: unknown) => {
+          this.errorMessage.set(this.getErrorMessage(error, 'No se pudo renovar la suscripción.'));
+        },
+      });
+  }
+
+  private loadSubscriptions(options: { readonly clearMessages: boolean } = { clearMessages: true }): void {
+    this.isLoading.set(true);
+
+    if (options.clearMessages) {
+      this.errorMessage.set('');
+      this.successMessage.set('');
+    }
 
     this.subscriptionsService
       .getAll()
@@ -108,15 +144,17 @@ export class SubscriptionsList implements OnInit {
 
           this.subscriptions.set([]);
           this.errorMessage.set(result.message || 'No se pudieron consultar los abonados.');
+          this.successMessage.set('');
         },
         error: (error: unknown) => {
           this.subscriptions.set([]);
-          this.errorMessage.set(this.getErrorMessage(error));
+          this.errorMessage.set(this.getErrorMessage(error, 'No se pudieron consultar los abonados.'));
+          this.successMessage.set('');
         },
       });
   }
 
-  private getErrorMessage(error: unknown): string {
+  private getErrorMessage(error: unknown, fallbackMessage: string): string {
     if (error instanceof HttpErrorResponse) {
       const responseBody = error.error as { message?: unknown } | null;
 
@@ -125,6 +163,6 @@ export class SubscriptionsList implements OnInit {
       }
     }
 
-    return 'No se pudieron consultar los abonados.';
+    return fallbackMessage;
   }
 }

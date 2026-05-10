@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { MessageResult } from '../../../core/models/message-result';
 import {
   CreateSubscriptionRequest,
+  RenewSubscriptionRequest,
   SubscriptionResponse,
 } from '../models/subscription.models';
 
@@ -22,5 +23,9 @@ export class SubscriptionsService {
 
   create(request: CreateSubscriptionRequest): Observable<MessageResult<number>> {
     return this.http.post<MessageResult<number>>(this.subscriptionsUrl, request);
+  }
+
+  renew(request: RenewSubscriptionRequest): Observable<MessageResult<number>> {
+    return this.http.put<MessageResult<number>>(`${this.subscriptionsUrl}/renew`, request);
   }
 }

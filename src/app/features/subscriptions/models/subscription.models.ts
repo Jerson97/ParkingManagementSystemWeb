@@ -19,3 +19,7 @@ export type CreateSubscriptionRequest = {
   readonly startDate: string;
   readonly endDate: string;
 };
+
+export type RenewSubscriptionRequest = {
+  readonly subscriptionId: number;
+};
