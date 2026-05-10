@@ -28,4 +28,8 @@ export class SubscriptionsService {
   renew(request: RenewSubscriptionRequest): Observable<MessageResult<number>> {
     return this.http.put<MessageResult<number>>(`${this.subscriptionsUrl}/renew`, request);
   }
+
+  cancel(id: number): Observable<MessageResult<number>> {
+    return this.http.put<MessageResult<number>>(`${this.subscriptionsUrl}/${id}/cancel`, null);
+  }
 }

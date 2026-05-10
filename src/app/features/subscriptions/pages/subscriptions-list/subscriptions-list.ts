@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 
+import { AuthService } from '../../../../core/services/auth.service';
 import { SubscriptionResponse } from '../../models/subscription.models';
 import { SubscriptionsService } from '../../services/subscriptions.service';
 
@@ -18,6 +19,7 @@ type SummaryCard = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubscriptionsList implements OnInit {
+  private readonly authService = inject(AuthService);
   private readonly subscriptionsService = inject(SubscriptionsService);
   private readonly dateFormatter = new Intl.DateTimeFormat('es-PE', {
     day: '2-digit',
@@ -29,6 +31,8 @@ export class SubscriptionsList implements OnInit {
   protected readonly errorMessage = signal('');
   protected readonly successMessage = signal('');
   protected readonly renewingSubscriptionId = signal<number | null>(null);
+  protected readonly cancelingSubscriptionId = signal<number | null>(null);
+  protected readonly currentUser = signal(this.authService.getCurrentUser());
   protected readonly subscriptions = signal<readonly SubscriptionResponse[]>([]);
   protected readonly summaryCards = computed<readonly SummaryCard[]>(() => {
     const subscriptions = this.subscriptions();
@@ -94,6 +98,10 @@ export class SubscriptionsList implements OnInit {
     return this.dateFormatter.format(date);
   }
 
+  protected canCancel(subscription: SubscriptionResponse): boolean {
+    return this.currentUser()?.role === 'Admin' && subscription.status === 'Active';
+  }
+
   protected renew(subscriptionId: number): void {
     const confirmed = window.confirm('¿Seguro que deseas renovar esta suscripción?');
 
@@ -120,6 +128,36 @@ export class SubscriptionsList implements OnInit {
         },
         error: (error: unknown) => {
           this.errorMessage.set(this.getErrorMessage(error, 'No se pudo renovar la suscripción.'));
+        },
+      });
+  }
+
+  protected cancel(subscriptionId: number): void {
+    const confirmed = window.confirm('¿Seguro que deseas cancelar este abonado?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    this.cancelingSubscriptionId.set(subscriptionId);
+
+    this.subscriptionsService
+      .cancel(subscriptionId)
+      .pipe(finalize(() => this.cancelingSubscriptionId.set(null)))
+      .subscribe({
+        next: (result) => {
+          if (result.code === 1 && result.data !== null) {
+            this.successMessage.set(result.message || 'Abonado cancelado correctamente.');
+            this.loadSubscriptions({ clearMessages: false });
+            return;
+          }
+
+          this.errorMessage.set(result.message || 'No se pudo cancelar el abonado.');
+        },
+        error: (error: unknown) => {
+          this.errorMessage.set(this.getErrorMessage(error, 'No se pudo cancelar el abonado.'));
         },
       });
   }

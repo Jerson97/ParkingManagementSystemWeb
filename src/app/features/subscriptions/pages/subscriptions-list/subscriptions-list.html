@@ -69,19 +69,37 @@
                   <td>{{ formatDate(subscription.startDate) }}</td>
                   <td>{{ formatDate(subscription.endDate) }}</td>
                   <td>
-                    <button
-                      class="action-button"
-                      type="button"
-                      [disabled]="renewingSubscriptionId() === subscription.id"
-                      [attr.aria-label]="'Renovar suscripción de ' + subscription.customerName"
-                      (click)="renew(subscription.id)"
-                    >
-                      @if (renewingSubscriptionId() === subscription.id) {
-                        Renovando...
-                      } @else {
-                        Renovar
+                    <div class="table-actions">
+                      <button
+                        class="action-button"
+                        type="button"
+                        [disabled]="renewingSubscriptionId() === subscription.id"
+                        [attr.aria-label]="'Renovar suscripción de ' + subscription.customerName"
+                        (click)="renew(subscription.id)"
+                      >
+                        @if (renewingSubscriptionId() === subscription.id) {
+                          Renovando...
+                        } @else {
+                          Renovar
+                        }
+                      </button>
+
+                      @if (canCancel(subscription)) {
+                        <button
+                          class="action-button is-danger"
+                          type="button"
+                          [disabled]="cancelingSubscriptionId() === subscription.id"
+                          [attr.aria-label]="'Cancelar abonado ' + subscription.customerName"
+                          (click)="cancel(subscription.id)"
+                        >
+                          @if (cancelingSubscriptionId() === subscription.id) {
+                            Cancelando...
+                          } @else {
+                            Cancelar
+                          }
+                        </button>
                       }
-                    </button>
+                    </div>
                   </td>
                 </tr>
               }
