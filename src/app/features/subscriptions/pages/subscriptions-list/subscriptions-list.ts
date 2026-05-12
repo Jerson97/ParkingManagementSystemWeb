@@ -3,7 +3,10 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { finalize } from 'rxjs';
 
 import { AuthService } from '../../../../core/services/auth.service';
-import { SubscriptionResponse } from '../../models/subscription.models';
+import {
+  ProcessExpiredSubscriptionResponse,
+  SubscriptionResponse,
+} from '../../models/subscription.models';
 import { SubscriptionsService } from '../../services/subscriptions.service';
 
 type SummaryCard = {
@@ -32,8 +35,11 @@ export class SubscriptionsList implements OnInit {
   protected readonly successMessage = signal('');
   protected readonly renewingSubscriptionId = signal<number | null>(null);
   protected readonly cancelingSubscriptionId = signal<number | null>(null);
+  protected readonly isProcessingExpired = signal(false);
   protected readonly currentUser = signal(this.authService.getCurrentUser());
   protected readonly subscriptions = signal<readonly SubscriptionResponse[]>([]);
+  protected readonly processedExpiredSubscriptions =
+    signal<readonly ProcessExpiredSubscriptionResponse[]>([]);
   protected readonly summaryCards = computed<readonly SummaryCard[]>(() => {
     const subscriptions = this.subscriptions();
 
@@ -102,6 +108,10 @@ export class SubscriptionsList implements OnInit {
     return this.currentUser()?.role === 'Admin' && subscription.status === 'Active';
   }
 
+  protected canProcessExpired(): boolean {
+    return this.currentUser()?.role === 'Admin';
+  }
+
   protected renew(subscriptionId: number): void {
     const confirmed = window.confirm('¿Seguro que deseas renovar esta suscripción?');
 
@@ -111,6 +121,7 @@ export class SubscriptionsList implements OnInit {
 
     this.errorMessage.set('');
     this.successMessage.set('');
+    this.processedExpiredSubscriptions.set([]);
     this.renewingSubscriptionId.set(subscriptionId);
 
     this.subscriptionsService
@@ -141,6 +152,7 @@ export class SubscriptionsList implements OnInit {
 
     this.errorMessage.set('');
     this.successMessage.set('');
+    this.processedExpiredSubscriptions.set([]);
     this.cancelingSubscriptionId.set(subscriptionId);
 
     this.subscriptionsService
@@ -162,12 +174,49 @@ export class SubscriptionsList implements OnInit {
       });
   }
 
+  protected processExpired(): void {
+    const confirmed = window.confirm('¿Seguro que deseas procesar las suscripciones vencidas?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    this.processedExpiredSubscriptions.set([]);
+    this.isProcessingExpired.set(true);
+
+    this.subscriptionsService
+      .processExpired()
+      .pipe(finalize(() => this.isProcessingExpired.set(false)))
+      .subscribe({
+        next: (result) => {
+          if (result.code === 1) {
+            this.successMessage.set(result.message);
+            this.processedExpiredSubscriptions.set(result.data ?? []);
+            this.loadSubscriptions({ clearMessages: false });
+            return;
+          }
+
+          this.errorMessage.set(result.message || 'No se pudieron procesar los abonados vencidos.');
+          this.processedExpiredSubscriptions.set([]);
+        },
+        error: (error: unknown) => {
+          this.errorMessage.set(
+            this.getErrorMessage(error, 'No se pudieron procesar los abonados vencidos.'),
+          );
+          this.processedExpiredSubscriptions.set([]);
+        },
+      });
+  }
+
   private loadSubscriptions(options: { readonly clearMessages: boolean } = { clearMessages: true }): void {
     this.isLoading.set(true);
 
     if (options.clearMessages) {
       this.errorMessage.set('');
       this.successMessage.set('');
+      this.processedExpiredSubscriptions.set([]);
     }
 
     this.subscriptionsService

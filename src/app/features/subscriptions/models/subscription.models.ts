@@ -23,3 +23,12 @@ export type CreateSubscriptionRequest = {
 export type RenewSubscriptionRequest = {
   readonly subscriptionId: number;
 };
+
+export type ProcessExpiredSubscriptionResponse = {
+  readonly subscriptionId: number;
+  readonly customerName: string;
+  readonly licensePlate: string;
+  readonly spaceNumber: string;
+  readonly endDate: string;
+  readonly newStatus: string;
+};

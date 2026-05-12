@@ -18,6 +18,46 @@
       <p class="subscriptions-success" role="status">{{ successMessage() }}</p>
     }
 
+    @if (processedExpiredSubscriptions().length > 0) {
+      <section class="processed-panel" aria-labelledby="processed-title">
+        <div class="table-heading">
+          <div>
+            <p class="section-kicker">Resultado</p>
+            <h3 id="processed-title">Suscripciones procesadas</h3>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="processed-table">
+            <thead>
+              <tr>
+                <th scope="col">Cliente</th>
+                <th scope="col">Placa</th>
+                <th scope="col">Espacio</th>
+                <th scope="col">Fecha fin</th>
+                <th scope="col">Nuevo estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (subscription of processedExpiredSubscriptions(); track subscription.subscriptionId) {
+                <tr>
+                  <td>{{ subscription.customerName }}</td>
+                  <td>{{ subscription.licensePlate }}</td>
+                  <td>{{ subscription.spaceNumber }}</td>
+                  <td>{{ formatDate(subscription.endDate) }}</td>
+                  <td>
+                    <span [class]="getStatusClass(subscription.newStatus)">
+                      {{ formatStatus(subscription.newStatus) }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
     <div class="summary-grid" aria-label="Resumen de abonados">
       @for (card of summaryCards(); track card.id) {
         <article class="summary-card">
@@ -33,6 +73,21 @@
           <p class="section-kicker">Detalle</p>
           <h3 id="subscriptions-table-title">Listado de abonados</h3>
         </div>
+
+        @if (canProcessExpired()) {
+          <button
+            class="toolbar-button"
+            type="button"
+            [disabled]="isProcessingExpired()"
+            (click)="processExpired()"
+          >
+            @if (isProcessingExpired()) {
+              Procesando...
+            } @else {
+              Procesar vencidos
+            }
+          </button>
+        }
       </div>
 
       @if (subscriptions().length === 0) {

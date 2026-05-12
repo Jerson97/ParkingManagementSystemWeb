@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { MessageResult } from '../../../core/models/message-result';
 import {
   CreateSubscriptionRequest,
+  ProcessExpiredSubscriptionResponse,
   RenewSubscriptionRequest,
   SubscriptionResponse,
 } from '../models/subscription.models';
@@ -31,5 +32,12 @@ export class SubscriptionsService {
 
   cancel(id: number): Observable<MessageResult<number>> {
     return this.http.put<MessageResult<number>>(`${this.subscriptionsUrl}/${id}/cancel`, null);
+  }
+
+  processExpired(): Observable<MessageResult<readonly ProcessExpiredSubscriptionResponse[]>> {
+    return this.http.post<MessageResult<readonly ProcessExpiredSubscriptionResponse[]>>(
+      `${this.subscriptionsUrl}/process-expired`,
+      null,
+    );
   }
 }
