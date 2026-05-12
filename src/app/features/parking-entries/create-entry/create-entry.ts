@@ -12,6 +12,7 @@ import { finalize } from 'rxjs';
 
 import { RateTypeResponse } from '../../rate-types/models/rate-type.models';
 import { RateTypesService } from '../../rate-types/services/rate-types.service';
+import { CreateParkingEntryResponse } from '../models/parking-entry.models';
 import { ParkingEntriesService } from '../services/parking-entries.service';
 
 @Component({
@@ -31,11 +32,21 @@ export class CreateEntry implements OnInit {
     maximumFractionDigits: 2,
     style: 'currency',
   });
+  private readonly dateTimeFormatter = new Intl.DateTimeFormat('es-PE', {
+    day: '2-digit',
+    hour: '2-digit',
+    hour12: false,
+    minute: '2-digit',
+    month: '2-digit',
+    timeZone: 'America/Lima',
+    year: 'numeric',
+  });
 
   protected readonly isLoadingRateTypes = signal(false);
   protected readonly isSubmitting = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly successMessage = signal('');
+  protected readonly createdTicket = signal<CreateParkingEntryResponse | null>(null);
   protected readonly rateTypes = signal<readonly RateTypeResponse[]>([]);
   protected readonly activeRateTypes = computed(() =>
     this.rateTypes().filter((rateType) => rateType.isActive),
@@ -55,6 +66,7 @@ export class CreateEntry implements OnInit {
   protected submit(): void {
     this.errorMessage.set('');
     this.successMessage.set('');
+    this.createdTicket.set(null);
 
     if (this.entryForm.invalid) {
       this.entryForm.markAllAsTouched();
@@ -76,6 +88,7 @@ export class CreateEntry implements OnInit {
         next: (result) => {
           if (result.code === 1 && result.data !== null) {
             this.successMessage.set(result.message || 'Ingreso registrado correctamente.');
+            this.createdTicket.set(result.data);
             return;
           }
 
@@ -104,6 +117,54 @@ export class CreateEntry implements OnInit {
     }
 
     return `${rateType.name} - ${price}`;
+  }
+
+  protected formatTicketDateTime(value: string): string {
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+
+    return this.dateTimeFormatter.format(date).replace(',', '');
+  }
+
+  protected formatTicketRate(ticket: CreateParkingEntryResponse): string {
+    const price = this.currencyFormatter.format(ticket.rateTypePrice);
+
+    if (ticket.isHourly) {
+      return `${ticket.rateTypeName} - ${price} por hora`;
+    }
+
+    return `${ticket.rateTypeName} - ${price}`;
+  }
+
+  protected formatTicketStatus(status: string): string {
+    if (status === 'Inside') {
+      return 'Abierto';
+    }
+
+    if (status === 'Completed') {
+      return 'Cerrado';
+    }
+
+    return status;
+  }
+
+  protected formatPaymentStatus(status: string): string {
+    if (status === 'Pending') {
+      return 'Pendiente';
+    }
+
+    if (status === 'Paid') {
+      return 'Pagado';
+    }
+
+    return status;
+  }
+
+  protected printTicket(): void {
+    window.print();
   }
 
   protected hasLicensePlateError(errorName: 'required' | 'maxlength' | 'pattern'): boolean {

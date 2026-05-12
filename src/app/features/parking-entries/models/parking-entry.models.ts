@@ -3,6 +3,19 @@ export interface CreateParkingEntryRequest {
   readonly rateTypeId: number;
 }
 
+export interface CreateParkingEntryResponse {
+  readonly parkingEntryId: number;
+  readonly ticketNumber: string;
+  readonly licensePlate: string;
+  readonly rateTypeName: string;
+  readonly rateTypePrice: number;
+  readonly isHourly: boolean;
+  readonly entryTime: string;
+  readonly spaceNumber: string;
+  readonly paymentStatus: string;
+  readonly status: string;
+}
+
 export interface GetParkingFeeRequest {
   readonly ticketNumber: string;
 }

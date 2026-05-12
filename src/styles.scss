@@ -74,3 +74,64 @@ a {
     scroll-behavior: auto !important;
   }
 }
+
+@media print {
+  @page {
+    margin: 4mm;
+    size: 80mm auto;
+  }
+
+  html,
+  body {
+    width: 80mm;
+    min-height: auto;
+    background: #ffffff !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .admin-shell,
+  .workspace,
+  .content,
+  app-create-entry,
+  .create-entry,
+  .ticket-panel {
+    display: block !important;
+    width: 80mm !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .sidebar,
+  .topbar {
+    display: none !important;
+  }
+
+  .ticket-print,
+  .ticket-print * {
+    visibility: visible !important;
+  }
+
+  .ticket-print {
+    position: absolute !important;
+    top: 0 !important;
+    left: 50% !important;
+    width: 72mm !important;
+    max-width: 72mm !important;
+    margin: 0 !important;
+    transform: translateX(-50%) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

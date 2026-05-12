@@ -138,6 +138,111 @@ select[aria-invalid='true'] {
   opacity: 0.72;
 }
 
+.ticket-panel {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 24rem;
+}
+
+.ticket-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.print-button {
+  min-height: 2.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-4);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.print-button:hover {
+  background: var(--color-surface-muted);
+}
+
+.ticket-print {
+  display: grid;
+  gap: var(--space-4);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4);
+  background: #ffffff;
+  color: #111827;
+  box-shadow: var(--shadow-sm);
+}
+
+.ticket-header {
+  display: grid;
+  gap: var(--space-1);
+  border-bottom: 1px dashed #9ca3af;
+  padding-bottom: var(--space-3);
+  text-align: center;
+}
+
+.ticket-system,
+.ticket-warning {
+  margin: 0;
+  font-weight: 800;
+}
+
+.ticket-system {
+  font-size: 0.875rem;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.2;
+}
+
+.ticket-details {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.ticket-details div {
+  display: grid;
+  grid-template-columns: minmax(7.25rem, 1fr) minmax(0, 1.2fr);
+  gap: var(--space-2);
+  align-items: baseline;
+}
+
+.ticket-details dt {
+  color: #4b5563;
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
+
+.ticket-details dd {
+  margin: 0;
+  color: #111827;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.ticket-warning {
+  border-top: 1px dashed #9ca3af;
+  border-bottom: 1px dashed #9ca3af;
+  padding: var(--space-3) 0;
+  text-align: center;
+}
+
+.ticket-conditions {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-left: var(--space-4);
+  color: #374151;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
 @media (max-width: 760px) {
   .create-entry-header {
     align-items: start;
@@ -158,5 +263,46 @@ select[aria-invalid='true'] {
 
   .submit-button {
     width: 100%;
+  }
+
+  .ticket-panel {
+    max-width: none;
+  }
+}
+
+@media print {
+  @page {
+    margin: 4mm;
+    size: 80mm auto;
+  }
+
+  :host {
+    display: block;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .create-entry,
+  .ticket-panel {
+    display: block;
+  }
+
+  .ticket-panel {
+    max-width: none;
+  }
+
+  .ticket-print {
+    width: 72mm;
+    max-width: 72mm;
+    border: 0;
+    border-radius: 0;
+    padding: 4mm;
+    box-shadow: none;
+  }
+
+  .ticket-details div {
+    grid-template-columns: 28mm 1fr;
   }
 }

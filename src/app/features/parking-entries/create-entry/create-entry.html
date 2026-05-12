@@ -1,5 +1,5 @@
 <section class="create-entry" aria-labelledby="create-entry-title">
-  <div class="create-entry-header">
+  <div class="create-entry-header no-print">
     <div>
       <p class="section-kicker">Operación</p>
       <h2 id="create-entry-title">Registrar ingreso</h2>
@@ -9,7 +9,7 @@
     </p>
   </div>
 
-  <form class="entry-form" [formGroup]="entryForm" (ngSubmit)="submit()" novalidate>
+  <form class="entry-form no-print" [formGroup]="entryForm" (ngSubmit)="submit()" novalidate>
     @if (isLoadingRateTypes()) {
       <p class="form-status" role="status">Cargando tarifas...</p>
     }
@@ -84,4 +84,58 @@
       </button>
     </div>
   </form>
+
+  @if (createdTicket(); as ticket) {
+    <section class="ticket-panel" aria-labelledby="generated-ticket-title">
+      <div class="ticket-actions no-print">
+        <button class="print-button" type="button" (click)="printTicket()">Imprimir ticket</button>
+      </div>
+
+      <article class="ticket-print" aria-labelledby="generated-ticket-title">
+        <header class="ticket-header">
+          <p class="ticket-system">Sistema de Gestión de Cochera</p>
+          <h3 id="generated-ticket-title">TICKET DE INGRESO</h3>
+        </header>
+
+        <dl class="ticket-details">
+          <div>
+            <dt>N° Ticket</dt>
+            <dd>{{ ticket.ticketNumber }}</dd>
+          </div>
+          <div>
+            <dt>Placa</dt>
+            <dd>{{ ticket.licensePlate }}</dd>
+          </div>
+          <div>
+            <dt>Espacio</dt>
+            <dd>{{ ticket.spaceNumber }}</dd>
+          </div>
+          <div>
+            <dt>Tarifa</dt>
+            <dd>{{ formatTicketRate(ticket) }}</dd>
+          </div>
+          <div>
+            <dt>Fecha/hora de ingreso</dt>
+            <dd>{{ formatTicketDateTime(ticket.entryTime) }}</dd>
+          </div>
+          <div>
+            <dt>Estado</dt>
+            <dd>{{ formatTicketStatus(ticket.status) }}</dd>
+          </div>
+          <div>
+            <dt>Pago</dt>
+            <dd>{{ formatPaymentStatus(ticket.paymentStatus) }}</dd>
+          </div>
+        </dl>
+
+        <p class="ticket-warning">** No pierda el ticket **</p>
+
+        <ul class="ticket-conditions">
+          <li>Conserve su ticket, acredita el ingreso del vehículo.</li>
+          <li>Entréguelo al momento de retirar el vehículo.</li>
+          <li>Indique si desea boleta o factura antes del pago.</li>
+        </ul>
+      </article>
+    </section>
+  }
 </section>

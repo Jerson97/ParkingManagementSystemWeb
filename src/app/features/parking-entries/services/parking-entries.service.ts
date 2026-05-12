@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { MessageResult } from '../../../core/models/message-result';
 import {
   CreateParkingEntryRequest,
+  CreateParkingEntryResponse,
   GetParkingEntryByTicketResponse,
   GetParkingEntryHistoryFilters,
   GetParkingEntryHistoryResponse,
@@ -22,8 +23,10 @@ export class ParkingEntriesService {
   private readonly http = inject(HttpClient);
   private readonly parkingEntriesUrl = `${environment.apiBaseUrl}/api/parkingentries`;
 
-  createEntry(request: CreateParkingEntryRequest): Observable<MessageResult<number>> {
-    return this.http.post<MessageResult<number>>(this.parkingEntriesUrl, request);
+  createEntry(
+    request: CreateParkingEntryRequest,
+  ): Observable<MessageResult<CreateParkingEntryResponse>> {
+    return this.http.post<MessageResult<CreateParkingEntryResponse>>(this.parkingEntriesUrl, request);
   }
 
   calculateFee(request: GetParkingFeeRequest): Observable<MessageResult<GetParkingFeeResponse>> {
